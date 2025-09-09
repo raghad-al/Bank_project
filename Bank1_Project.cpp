@@ -578,6 +578,13 @@ short ReadMenuOption() {
   
 }
 
+void handleMenuSelection(enMenuOption menuOption);
+
+void ShowMainMenuWithOption() {
+    PrintMenu();
+    handleMenuSelection((enMenuOption)ReadMenuOption());
+}
+
 void GoBackToMainMenu() {
     cout << "\nPress any key to go back to the Main Menu...\n";
 
@@ -585,12 +592,11 @@ void GoBackToMainMenu() {
 
     system("cls");
 
-    PrintMenu();
+    ShowMainMenuWithOption();
 }
 
 void handleMenuSelection(enMenuOption menuOption) {
 
-    while (1) {
       system("cls");
       switch (menuOption) {
       case (enMenuOption::eShowAllClient): {
@@ -630,14 +636,12 @@ void handleMenuSelection(enMenuOption menuOption) {
     
 
     GoBackToMainMenu();
-    menuOption = (enMenuOption)ReadMenuOption();
-    }
+
 }
 
 int main()
 {
-    PrintMenu();
-    handleMenuSelection((enMenuOption)ReadMenuOption());
+    ShowMainMenuWithOption();
    
     system("pause>0");
 
