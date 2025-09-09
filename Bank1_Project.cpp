@@ -18,16 +18,26 @@ struct BankClient {
     float accBalance;
 };
 
-enum enMenuOption {
+enum enMainMenuOptions {
     eShowAllClient = 1,
     eAddClient = 2,
     eDeleteClient = 3,
     eUpdateClient = 4,
     eFindClient = 5,
-    eExit
+    eTransaction = 6,
+    eExit = 7
+};
+
+enum enTransMenuOptions {
+    eDeposit = 1,
+    eWithdraw = 2,
+    eTotalBanlances = 3,
+    eMainMenu = 4
 };
 
 string fileBankClients = "BankClient.txt";
+
+void ShowTransMenuScreen();
 
 //String functions
 
@@ -540,8 +550,8 @@ void ShowFindClientScreen() {
     }
 }
 
-//Menu
-void PrintMenu() {
+//Main Menu
+void PrintMainMenu() {
 
     cout << "*************************************\n";
     cout << "Main Menu screen\n";
@@ -552,37 +562,38 @@ void PrintMenu() {
     cout << "[3] Delete Client\n";
     cout << "[4] Update Client\n";
     cout << "[5] Find Clients Info\n";
-    cout << "[6] Exit\n";
+    cout << "[6] Transaction\n";
+    cout << "[7] Exit\n";
 
     cout << "*************************************\n";
 
 }
 
-short ReadMenuOption() {
+short ReadMenuOption(short lastOpt) {
     short menuOpt;
 
     do {
 
-       cout << "\nChoose what do you want to do[1 - 6]?";
+       cout << "\nChoose what do you want to do[1 - "<< lastOpt << "]?";
        cin >> menuOpt;
 
-       if (menuOpt < 1 || menuOpt > 6) {
+       if (menuOpt < 1 || menuOpt > lastOpt) {
 
-           RedMessage("Warrning: You will must enter only a number between 1 and 6");
+           RedMessage("Warrning: You will must enter only a number between 1 and " + lastOpt);
         
        }
 
-    } while (menuOpt < 1 || menuOpt > 6);
+    } while (menuOpt < 1 || menuOpt > lastOpt);
 
     return menuOpt;
   
 }
 
-void handleMenuSelection(enMenuOption menuOption);
+void handleMainMenuSelection(enMainMenuOptions menuOption);
 
-void ShowMainMenuWithOption() {
-    PrintMenu();
-    handleMenuSelection((enMenuOption)ReadMenuOption());
+void ShowMainMenuScreen() {
+    PrintMainMenu();
+    handleMainMenuSelection((enMainMenuOptions)ReadMenuOption(7));
 }
 
 void GoBackToMainMenu() {
@@ -592,56 +603,109 @@ void GoBackToMainMenu() {
 
     system("cls");
 
-    ShowMainMenuWithOption();
+    ShowMainMenuScreen();
 }
 
-void handleMenuSelection(enMenuOption menuOption) {
+void handleMainMenuSelection(enMainMenuOptions menuOption) {
 
       system("cls");
       switch (menuOption) {
-      case (enMenuOption::eShowAllClient): {
+      case (enMainMenuOptions::eShowAllClient): {
 
           ShowAllClientsScreen();
           break;
       };
         
-      case (enMenuOption::eAddClient):{
+      case (enMainMenuOptions::eAddClient):{
 
           ShowAddClientScreen();
           break;
       };
 
-      case (enMenuOption::eDeleteClient): {
+      case (enMainMenuOptions::eDeleteClient): {
 
           ShowDeleteClientScreen();
           break;
       };
 
-      case(enMenuOption::eUpdateClient): {
+      case(enMainMenuOptions::eUpdateClient): {
 
           ShowUpdateClientScreen();
           break;
       };
 
-      case(enMenuOption::eFindClient): {
+      case(enMainMenuOptions::eFindClient): {
           ShowFindClientScreen();
           break;
       };
-      case(enMenuOption::eExit): {
+
+      case(enMainMenuOptions::eTransaction): {
+          ShowTransMenuScreen();
+          break;
+      };
+
+      case(enMainMenuOptions::eExit): {
           DisplayTitle("Program End");
           exit(0);
       }
 
       }
     
-
     GoBackToMainMenu();
 
 }
 
+
+//transaction Menu
+
+void PrintTransMenu() {
+
+    cout << "*************************************\n";
+    cout << "Transaction Menu screen\n";
+    cout << "*************************************\n";
+
+    cout << "[1] Deposit\n";
+    cout << "[2] Withdraw\n";
+    cout << "[3] Total Balances\n";
+    cout << "[4] Return to Main Menu\n";
+
+    cout << "*************************************\n";
+
+}
+
+void handleTransMenuSelection(enTransMenuOptions menuOption);
+
+void ShowTransMenuScreen() {
+    PrintTransMenu();
+    handleTransMenuSelection((enTransMenuOptions)ReadMenuOption(7));
+}
+
+void handleTransMenuSelection(enTransMenuOptions menuOption) {
+    system("cls");
+
+    switch (menuOption) {
+    case(enTransMenuOptions::eDeposit) :{
+            
+        break;
+    }
+
+    case(enTransMenuOptions::eWithdraw): {
+        break;
+    }
+
+    case(enTransMenuOptions::eTotalBanlances): {
+        break;
+    }
+
+    case(enTransMenuOptions::eMainMenu): {
+        ShowMainMenuScreen();
+    }
+    }
+}
+
 int main()
 {
-    ShowMainMenuWithOption();
+    ShowMainMenuScreen();
    
     system("pause>0");
 

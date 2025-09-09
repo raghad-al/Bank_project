@@ -1,3 +1,3 @@
 ﻿  Bank1_Project.cpp
-C:\Users\User\source\repos\Bank1_Project\Bank1_Project\Bank1_Project.cpp(85,30): warning C4267: '=': conversion from 'size_t' to 'short', possible loss of data
+C:\Users\User\source\repos\Bank1_Project\Bank1_Project\Bank1_Project.cpp(95,30): warning C4267: '=': conversion from 'size_t' to 'short', possible loss of data
   Bank1_Project.vcxproj -> C:\Users\User\source\repos\Bank1_Project\x64\Debug\Bank1_Project.exe
