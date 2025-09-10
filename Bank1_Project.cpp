@@ -1,5 +1,4 @@
-// Bank1_Project.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+#pragma warning(disable:4996)
 
 #include <iostream>
 #include <cstdlib>
@@ -7,6 +6,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <ctime>
+#include <chrono>
+#include <thread>
+#include <limits>
 #include "stringra.h"
 
 using namespace std;
@@ -43,6 +46,8 @@ string fileBankClients = "BankClient.txt";
 
 void ShowTransMenuScreen();
 
+
+
 //Color message
 void GreenMessage(string message) {
     cout << "\n\033[32m"<< message <<"\033[0m\n";
@@ -52,10 +57,42 @@ void RedMessage(string message) {
     cout << "\n\033[31m" << message << "\033[0m\n";
 }
 
+//Display format
+void DisplayTitle(string title) {
+    cout << "\n*************************************\n";
+
+    cout << title;
+
+    cout << "\n*************************************\n";
+}
+
 void printFarewellMessage() {
     cout << "\n****************************************\n";
     cout << "        Have a good day and Thank you!  \n";
     cout << "****************************************\n\n";
+}
+
+void greetAccordingToTime() {
+    time_t t = time(0);
+
+    tm* now = localtime(&t);
+
+    int hour = now->tm_hour;
+    
+    if (hour > 5 && hour < 12) {
+        DisplayTitle("\tGood Morning!");
+    }
+    else if (hour > 12 && hour < 17) {
+        DisplayTitle("\tGood Afternoon!");
+    }
+    else if (hour > 17 && hour < 21) {
+        DisplayTitle("\tGood Evening");
+    }
+    else DisplayTitle("\tGood Night!");
+
+    this_thread::sleep_for(chrono::seconds(3));
+
+    system("cls");
 }
 
 //Confirm functions
@@ -67,6 +104,8 @@ char GetYesNoAnswer(string question) {
         cout << "\n" << question << " (y / n)?";
 
         cin >> response;
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         if (to_lower(response) != 'n' && to_lower(response) != 'y') {
 
@@ -505,14 +544,6 @@ void UpdateProcess(string fileName) {
 
 //Screen display of each operation in main menu
 
-void DisplayTitle(string title) {
-    cout << "\n*************************************\n";
-
-    cout << title;
-        
-    cout << "\n*************************************\n";
-}
-
 void ShowAllClientsScreen() {
     DisplayTitle("Clients list");
     DisplayAllClients();
@@ -854,6 +885,8 @@ void handleTransMenuSelection(enTransMenuOptions menuOption) {
 
 int main()
 {
+    greetAccordingToTime();
+
     ShowMainMenuScreen();
    
     system("pause>0");
