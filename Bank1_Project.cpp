@@ -52,6 +52,74 @@ void RedMessage(string message) {
     cout << "\n\033[31m" << message << "\033[0m\n";
 }
 
+void printFarewellMessage() {
+    cout << "\n****************************************\n";
+    cout << "        Have a good day and Thank you!  \n";
+    cout << "****************************************\n\n";
+}
+
+//Confirm functions
+char GetYesNoAnswer(string question) {
+    char response;
+
+    do {
+
+        cout << "\n" << question << " (y / n)?";
+
+        cin >> response;
+
+        if (to_lower(response) != 'n' && to_lower(response) != 'y') {
+
+            RedMessage("Warning: you can enter only n for no or y for yes");
+        }
+
+    } while (to_lower(response) != 'n' && to_lower(response) != 'y');
+
+    return to_lower(response);
+}
+
+bool ConfirnOperation(string operation) {
+    string question = "Are you sure you want to " + operation;
+
+    char response = GetYesNoAnswer(question);
+
+    if (response == 'n') return 0;
+    else return 1;
+}
+
+bool ConfirnTrans(string trans) {
+
+    string question = "Are you sure you want to perform " + trans + " Transaction";
+
+    char response = GetYesNoAnswer(question);
+
+    if (response == 'n') return 0;
+    else return 1;
+}
+
+bool ConfirmReentry() {
+
+    string question = "Would you like to enter the data again";
+
+    char response = GetYesNoAnswer(question);
+
+    if (response == 'n') {
+        printFarewellMessage();
+        return 0;
+    }
+    else return 1;
+}
+
+bool AskMoreClient() {
+
+    string question = "Do you want to add more clients";
+
+    char response = GetYesNoAnswer(question);
+
+    if (response == 'n') return 0;
+    else return 1;
+}
+
 //structure Bank client functions
 void ReadData(string& Data, string DataToRead) {
     cout << "\nPlease Enter " << DataToRead << " :";
@@ -127,6 +195,117 @@ BankClient ConvertRecordToData(string record, string seperator = "#//#") {
     return stBankClient;
 }
 
+bool FindClientByAccNumber(string accNum, BankClient& stBankClient) {
+    fstream fileToRead;
+
+    fileToRead.open(fileBankClients, ios::in);
+
+    if (fileToRead.is_open()) {
+        string record;
+        BankClient client;
+
+        while (getline(fileToRead, record)) {
+
+            client = ConvertRecordToData(record);
+
+            if (client.accNum == accNum) {
+                stBankClient = client;
+
+                return 1;
+            }
+        }
+
+        fileToRead.close();
+    }
+    return 0;
+}
+
+BankClient ReturnClientByAccNum(string accNum) {
+    fstream fileToRead;
+    BankClient stBankClient;
+
+    fileToRead.open(fileBankClients, ios::in);
+
+    if (fileToRead.is_open()) {
+        string record;
+        BankClient client;
+
+        while (getline(fileToRead, record)) {
+
+            client = ConvertRecordToData(record);
+
+            if (client.accNum == accNum) {
+                stBankClient = client;
+            }
+        }
+
+        fileToRead.close();
+    }
+    return stBankClient;
+}
+
+bool CheckExistingOfAccNum(string& accNum) {
+    fstream fileToRead;
+
+    fileToRead.open(fileBankClients, ios::in);
+
+    if (fileToRead.is_open()) {
+        string record;
+        BankClient client;
+
+        while (getline(fileToRead, record)) {
+
+            client = ConvertRecordToData(record);
+
+            if (client.accNum == accNum) {
+
+                return 1;
+            }
+        }
+
+        fileToRead.close();
+    }
+    return 0;
+}
+
+bool ReadAccNumOfClientNotExistBefore(string& accNum) {
+
+    while (1) {
+        ReadData(accNum, "Account Number");
+        if (CheckExistingOfAccNum(accNum)) {
+            RedMessage("The client with the account number " + accNum + " already exist.");
+
+            if (!ConfirmReentry()) {
+                break;
+            }
+        }
+        else {
+            return 1;
+            break;
+        }
+    }
+    return 0;
+}
+
+bool ReadAccNumOfClientExistBefore(string& accNum) {
+
+    while (1) {
+        ReadData(accNum, "Account Number");
+        if (!CheckExistingOfAccNum(accNum)) {
+            RedMessage("The client with the account number " + accNum + " was not found.");
+
+            if (!ConfirmReentry()) {
+                break;
+            }
+        }
+        else {
+            return 1;
+            break;
+        }
+    }
+    return 0;
+}
+
 //file functions
 void SaveClientToFile(BankClient stBankClient, string FileName) {
 
@@ -186,129 +365,37 @@ vector<BankClient> ReadFromFile(string FileName) {
     return vBankClients;
 }
 
-//Confirm functions
-char GetYesNoAnswer(string question) {
-    char response;
-
-    do {
-
-        cout << "\n" << question << " (y / n)?";
-
-        cin >> response;
-
-        if (to_lower(response) != 'n' && to_lower(response) != 'y') {
-
-            RedMessage("Warning: you can enter only n for no or y for yes");
-        }
-
-    } while (to_lower(response) != 'n' && to_lower(response) != 'y');
-
-    return to_lower(response);
-}
-
-bool ConfirnOperation(string operation) {
-    string question = "Are you sure you want to " + operation;
-
-    char response = GetYesNoAnswer(question);
-
-    if (response == 'n') return 0;
-    else return 1;
-}
-
-bool ConfirnTrans(string trans) {
-  
-    string question = "Are you sure you want to perform " +trans+ " Transaction" ;
-
-    char response = GetYesNoAnswer(question);
-
-    if (response == 'n') return 0;
-    else return 1;
-}
-
-bool ConfirmReentry() {
-
-    string question = "Would you like to enter the data again";
-
-    char response = GetYesNoAnswer(question);
-
-    if (response == 'n') return 0;
-    else return 1;
-}
-
-bool AskMoreClient() {
-
-    string question = "Do you want to add more clients";
-
-    char response = GetYesNoAnswer(question);
-
-    if (response == 'n') return 0;
-    else return 1;
-}
-
 //CRUD opreation functions
-bool FindClientByAccNumber(string accNum, BankClient& stBankClient) {
-    fstream fileToRead;
-
-    fileToRead.open(fileBankClients, ios::in);
-
-    if (fileToRead.is_open()) {
-        string record;
-        BankClient client;
-
-        while (getline(fileToRead, record)) {
-
-            client = ConvertRecordToData(record);
-
-            if (client.accNum == accNum) {
-                stBankClient = client;
-
-                return 1;
-            }
-        }
-
-        fileToRead.close();
-    }
-    return 0;
-}
-
-string ReadAndCheckExitingOfAccNum() {
-    string accNum;
-    BankClient stClient;
-
-    cout << "Please enter Account Number :";
-    cin >> accNum;
-    while (FindClientByAccNumber(accNum, stClient)) {
-
-        RedMessage("The client with the account number " + accNum + " already exist , Please Enter Another :");
-        
-        cin >> accNum;
-    }
-
-    return accNum;
-}
 
 void AddClient() {
     BankClient stBankClient;
     string accNum;
 
     while (1) {
-        accNum = ReadAndCheckExitingOfAccNum();
 
-        stBankClient.accNum = accNum;
+        if (ReadAccNumOfClientNotExistBefore(accNum)) {
 
-        ReadClientData(stBankClient , 0);
+            stBankClient.accNum = accNum;
 
-        SaveClientToFile(stBankClient, fileBankClients);
+            ReadClientData(stBankClient, 0);
 
-        GreenMessage("Client added Successfully");
+            SaveClientToFile(stBankClient, fileBankClients);
 
-        if (AskMoreClient()) {
-            system("cls");
-            cout << "*************************************\n";
-            cout << "Add New Client\n";
-            cout << "*************************************\n";
+            GreenMessage("Client added Successfully");
+
+            if (AskMoreClient()) {
+                system("cls");
+                cout << "*************************************\n";
+                cout << "Add New Client\n";
+                cout << "*************************************\n";
+            }
+
+            else break;
         }
-        else break;
+        else {
+            break;
+        }
+
     }
 }
 
@@ -354,32 +441,23 @@ void DeleteProcess(string fileName) {
 
     BankClient stClient;
 
-    ReadData(accNum, "Account Number");
+    if (ReadAccNumOfClientExistBefore(accNum)) {
+            stClient = ReturnClientByAccNum(accNum);
 
+            cout << "\nData of client:\n";
 
-    if (FindClientByAccNumber(accNum, stClient)) {
+            PrintClientData(stClient);
 
-        cout << "\nData of client:\n";
+            if (ConfirnOperation("delete")) {
+                DeleteClient(vClients, accNum);
 
-        PrintClientData(stClient);
+                GreenMessage("Client Deleted Successfully");
 
-        if (ConfirnOperation("delete")) {
-            DeleteClient(vClients, accNum);
-
-            GreenMessage("Client Deleted Successfully");
-
-
-            vClients = ReadFromFile(fileBankClients);
-        }
-        else RedMessage( "The deletion was canceled");
+                vClients = ReadFromFile(fileBankClients);
+            }
+            else RedMessage("The deletion was canceled");
 
     }
-    else {
-
-        RedMessage("The client with the account number " + accNum + " was not found");
-
-    }
-
 }
 
 void UpdateClient(vector<BankClient>& vClients, string accNum) {
@@ -406,28 +484,23 @@ void UpdateProcess(string fileName) {
 
     BankClient stClient;
 
-    ReadData(accNum, "Account Number");
-
-
-    if (FindClientByAccNumber(accNum, stClient)) {
+    if (ReadAccNumOfClientExistBefore(accNum)) {
+        stClient = ReturnClientByAccNum(accNum);
 
         cout << "\nData of client:\n";
 
         PrintClientData(stClient);
 
         if (ConfirnOperation("update")) {
-            UpdateClient(vClients, accNum);
+             UpdateClient(vClients, accNum);
 
-            GreenMessage("Client Updated Successfully");
+             GreenMessage("Client Updated Successfully");
 
         }
         else RedMessage("The Update was canceled");
 
-    }
-    else {
-        RedMessage("The client with the account number " + accNum + " was not found");
-    }
 
+    }
 }
 
 //Screen display of each operation in main menu
@@ -467,14 +540,11 @@ void ShowFindClientScreen() {
     string accNum;
     BankClient stBankClient;
 
-    cout << "Please enter Account Number :";
-    cin >> accNum;
 
-    if (FindClientByAccNumber(accNum, stBankClient)) {
+    if (ReadAccNumOfClientExistBefore(accNum)) {
+        stBankClient = ReturnClientByAccNum(accNum);
+
         PrintClientData(stBankClient);
-    }
-    else {
-        cout << "The client with the account number " << accNum << " dosen't found";
     }
 }
 
@@ -620,52 +690,35 @@ void ShowTransMenuScreen() {
     handleTransMenuSelection((enTransMenuOptions)ReadMenuOption(4));
 }
 
-//Display Total Balances
-BankClient ReadAccNumAndCheckExistingClient() {
-
-    string accNum;
-    BankClient stClient;
-
-    while (1) {
-        ReadData(accNum, "Account Number");
-
-        if (FindClientByAccNumber(accNum, stClient)) {
-
-            cout << "\nData of client:\n";
-
-            PrintClientData(stClient);
-
-            break;
-        }
-
-        else RedMessage("The client with the account number " + accNum + " was not found ,Try again");
-    }
-    
-    return stClient;
-}
-
 //transactions functions
 void DepositAmountTrans(vector<BankClient> &vBankClients) {
     float depositAmount = 0;
+    BankClient stClient;
 
-    BankClient stClient = ReadAccNumAndCheckExistingClient();
+    string accNum;
 
-    cout << "\nPlease enter the amount to deposit :";
-    cin >> depositAmount;
+    if (ReadAccNumOfClientExistBefore(accNum)) {
+        stClient = ReturnClientByAccNum(accNum);
 
-    if (ConfirnTrans("deposit")) {
-        for (BankClient& client : vBankClients) {
-            if (client.accNum == stClient.accNum) {
-                client.accBalance = client.accBalance + depositAmount;
-                GreenMessage("The transaction was succesfully done!");
-                break;
+        cout << "\nData of client:\n";
+
+        PrintClientData(stClient);
+        cout << "\nPlease enter the amount to deposit :";
+        cin >> depositAmount;
+
+        if (ConfirnTrans("deposit")) {
+            for (BankClient& client : vBankClients) {
+                if (client.accNum == accNum) {
+                    client.accBalance = client.accBalance + depositAmount;
+                    GreenMessage("\nThe transaction was succesfully done!");
+                    break;
+                }
             }
         }
+        else {
+            RedMessage("\nThe Transaction was canceled");
+        }
     }
-    else {
-        RedMessage("The Transaction was canceled");
-    }
-
 }
 
 void ShowDepositTransScreen() {
@@ -677,34 +730,47 @@ void ShowDepositTransScreen() {
 
 void WithDrawAmountTrans(vector<BankClient>& vBankClients) {
     float WithDrawAmount = 0;
+    string accNum;
 
-    BankClient stClient = ReadAccNumAndCheckExistingClient();
-    
-    while (1) {
+    BankClient stClient;
 
-        cout << "\nPlease enter the withdraw amount :";
-        cin >> WithDrawAmount;
+    if (ReadAccNumOfClientExistBefore(accNum)) {
 
-        if (WithDrawAmount <= stClient.accBalance) {
-            if (ConfirnTrans("WithDraw")) {
-                for (BankClient& client : vBankClients) {
-                    if (client.accNum == stClient.accNum) {
-                        client.accBalance = client.accBalance - WithDrawAmount;
-                        GreenMessage("The transaction was succesfully done!");
-                        break;
+        stClient = ReturnClientByAccNum(accNum);
+
+        cout << "\nData of client:\n";
+
+        PrintClientData(stClient);
+
+
+        while (1) {
+
+            cout << "\nPlease enter the withdraw amount :";
+            cin >> WithDrawAmount;
+
+            if (WithDrawAmount <= stClient.accBalance) {
+                if (ConfirnTrans("WithDraw")) {
+                    for (BankClient& client : vBankClients) {
+                        if (client.accNum == stClient.accNum) {
+                            client.accBalance = client.accBalance - WithDrawAmount;
+                            GreenMessage("\nThe transaction was succesfully done!");
+                            break;
+                        }
                     }
                 }
+                else {
+                    RedMessage("\nThe Transaction was canceled");
+                }
+                break;
             }
             else {
-                RedMessage("The Transaction was canceled");
+                RedMessage("Amount Exceeds The Balance ,You can withdraw up to :" + to_string(stClient.accBalance));
+                if (!ConfirmReentry()) {
+                    break;
+                }
             }
-            break;
-        }
-        else {
-            RedMessage("Amount Exceeds The Balance ,You can withdraw up to :" + to_string(stClient.accBalance));
         }
     }
-
 }
 
 void ShowWithDrawTransScreen() {
