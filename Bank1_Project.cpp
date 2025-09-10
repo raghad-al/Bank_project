@@ -146,7 +146,7 @@ void RedMessage(string message) {
 
 //structure Bank client function
 void ReadData(string& Data, string DataToRead) {
-    cout << "Please Enter " << DataToRead << " :";
+    cout << "\nPlease Enter " << DataToRead << " :";
     cin >> Data;
 }
 
@@ -301,6 +301,16 @@ char GetYesNoAnswer(string question) {
 
 bool AffirmeOperation(string operation) {
     string question = "Are you sure you want to " + operation;
+
+    char response = GetYesNoAnswer(question);
+
+    if (response == 'n') return 0;
+    else return 1;
+}
+
+bool AffirmeTrans(string trans) {
+  
+    string question = "Are you sure you want to perform " +trans+ " Transaction" ;
 
     char response = GetYesNoAnswer(question);
 
@@ -502,7 +512,7 @@ void UpdateProcess(string fileName) {
 
 }
 
-//Screen display of each operation
+//Screen display of each operation in main menu
 
 void DisplayTitle(string title) {
     cout << "\n*************************************\n";
@@ -579,7 +589,7 @@ short ReadMenuOption(short lastOpt) {
 
        if (menuOpt < 1 || menuOpt > lastOpt) {
 
-           RedMessage("Warrning: You will must enter only a number between 1 and " + lastOpt);
+           RedMessage("Warrning: You will must enter only a number between 1 and " + to_string(lastOpt));
         
        }
 
@@ -613,29 +623,34 @@ void handleMainMenuSelection(enMainMenuOptions menuOption) {
       case (enMainMenuOptions::eShowAllClient): {
 
           ShowAllClientsScreen();
+          GoBackToMainMenu();
           break;
       };
         
       case (enMainMenuOptions::eAddClient):{
 
           ShowAddClientScreen();
+          GoBackToMainMenu();
           break;
       };
 
       case (enMainMenuOptions::eDeleteClient): {
 
           ShowDeleteClientScreen();
+          GoBackToMainMenu();
           break;
       };
 
       case(enMainMenuOptions::eUpdateClient): {
 
           ShowUpdateClientScreen();
+          GoBackToMainMenu();
           break;
       };
 
       case(enMainMenuOptions::eFindClient): {
           ShowFindClientScreen();
+          GoBackToMainMenu();
           break;
       };
 
@@ -650,9 +665,6 @@ void handleMainMenuSelection(enMainMenuOptions menuOption) {
       }
 
       }
-    
-    GoBackToMainMenu();
-
 }
 
 
@@ -673,27 +685,179 @@ void PrintTransMenu() {
 
 }
 
+void GoBackToTransMenu() {
+    cout << "\nPress any key to go back to the Transaction Menu...\n";
+
+    system("pause>0");
+
+    system("cls");
+
+    ShowTransMenuScreen();
+}
+
 void handleTransMenuSelection(enTransMenuOptions menuOption);
 
 void ShowTransMenuScreen() {
     PrintTransMenu();
-    handleTransMenuSelection((enTransMenuOptions)ReadMenuOption(7));
+    handleTransMenuSelection((enTransMenuOptions)ReadMenuOption(4));
 }
 
+//Display Total Balances
+BankClient ReadAccNumAndCheckExistingClient() {
+
+    string accNum;
+    BankClient stClient;
+
+    while (1) {
+        ReadData(accNum, "Account Number");
+
+        if (FindClientByAccNumber(accNum, stClient)) {
+
+            cout << "\nData of client:\n";
+
+            PrintClientData(stClient);
+
+            break;
+        }
+
+        else RedMessage("The client with the account number " + accNum + " was not found ,Try again");
+    }
+    
+    return stClient;
+}
+
+void DepositAmountTrans(vector<BankClient> &vBankClients) {
+    float depositAmount = 0;
+
+    BankClient stClient = ReadAccNumAndCheckExistingClient();
+
+    cout << "\nPlease enter the amount to deposit :";
+    cin >> depositAmount;
+
+    if (AffirmeTrans("deposit")) {
+        for (BankClient& client : vBankClients) {
+            if (client.accNum == stClient.accNum) {
+                client.accBalance = client.accBalance + depositAmount;
+                GreenMessage("The transaction was succesfully done!");
+                break;
+            }
+        }
+    }
+    else {
+        RedMessage("The Transaction was canceled");
+    }
+
+}
+
+void ShowDepositTransScreen() {
+    vector<BankClient> vBankClients = ReadFromFile(fileBankClients);
+    DisplayTitle("Deposit Screen");
+    DepositAmountTrans(vBankClients);
+    SaveNewClientsData(vBankClients, fileBankClients);
+}
+
+void WithDrawAmountTrans(vector<BankClient>& vBankClients) {
+    float WithDrawAmount = 0;
+
+    BankClient stClient = ReadAccNumAndCheckExistingClient();
+    
+    while (1) {
+
+        cout << "\nPlease enter the withdraw amount :";
+        cin >> WithDrawAmount;
+
+        if (WithDrawAmount <= stClient.accBalance) {
+            if (AffirmeTrans("WithDraw")) {
+                for (BankClient& client : vBankClients) {
+                    if (client.accNum == stClient.accNum) {
+                        client.accBalance = client.accBalance - WithDrawAmount;
+                        GreenMessage("The transaction was succesfully done!");
+                        break;
+                    }
+                }
+            }
+            else {
+                RedMessage("The Transaction was canceled");
+            }
+            break;
+        }
+        else {
+            RedMessage("Amount Exceeds The Balance ,You can withdraw up to :" + to_string(stClient.accBalance));
+        }
+    }
+
+}
+
+void ShowWithDrawTransScreen() {
+    vector<BankClient> vBankClients = ReadFromFile(fileBankClients);
+    DisplayTitle("Withdraw Screen");
+    WithDrawAmountTrans(vBankClients);
+    SaveNewClientsData(vBankClients, fileBankClients);
+}
+
+float CalculateTotal(vector<float> accBalances) {
+
+    float totalAccBalances = 0;
+
+    for (float& accBalance : accBalances) {
+        totalAccBalances += accBalance;
+    }
+
+    return totalAccBalances;
+}
+
+void DisplayTotalBalances() {
+    vector<BankClient> vBankClients = ReadFromFile(fileBankClients);
+    vector<float> accBalances;
+
+    cout << endl << setw(40) << " " << "Balances List of (" << vBankClients.size() << ") client(s)" << endl;
+    cout << right << setw(40) << " " << "------------------------------" << endl << endl;
+    cout << setw(20) << "| " << left << setw(20) << "Account Number";
+    cout << "| " << left << setw(35) << "Client Name";
+    cout << "| " << left << setw(15) << "Balance" << "|" << endl;
+
+    for (BankClient& client : vBankClients) {
+        cout << right << setw(20) << "| " << left << setw(20) << client.accNum;
+  
+        cout << "| " << left << setw(35) << client.name;
+        
+        cout << "| " << left << setw(15) << client.accBalance << "|" << endl;
+    }
+
+    for (BankClient& client : vBankClients) {
+        accBalances.push_back(client.accBalance);
+    }
+
+    cout << endl << setw(40) << " " << "Total Balances = " << CalculateTotal(accBalances);
+}
+
+void ShowTotalBalancesScreen() {
+
+    DisplayTitle("Total Balances");
+    DisplayTotalBalances();
+
+}
+
+// handle transaction menu's options
 void handleTransMenuSelection(enTransMenuOptions menuOption) {
     system("cls");
 
     switch (menuOption) {
-    case(enTransMenuOptions::eDeposit) :{
-            
+    case(enTransMenuOptions::eDeposit): {
+        ShowDepositTransScreen();
+        GoBackToTransMenu();
         break;
     }
 
     case(enTransMenuOptions::eWithdraw): {
+        ShowWithDrawTransScreen();
+        GoBackToTransMenu();
         break;
     }
 
     case(enTransMenuOptions::eTotalBanlances): {
+        ShowTotalBalancesScreen();
+        GoBackToTransMenu();
         break;
     }
 
@@ -712,13 +876,3 @@ int main()
     return 0;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
