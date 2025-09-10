@@ -44,7 +44,6 @@ string fileBankClients = "BankClient.txt";
 void ShowTransMenuScreen();
 
 //Color message
-
 void GreenMessage(string message) {
     cout << "\n\033[32m"<< message <<"\033[0m\n";
 }
@@ -53,7 +52,7 @@ void RedMessage(string message) {
     cout << "\n\033[31m" << message << "\033[0m\n";
 }
 
-//structure Bank client function
+//structure Bank client functions
 void ReadData(string& Data, string DataToRead) {
     cout << "\nPlease Enter " << DataToRead << " :";
     cin >> Data;
@@ -128,7 +127,7 @@ BankClient ConvertRecordToData(string record, string seperator = "#//#") {
     return stBankClient;
 }
 
-//file function
+//file functions
 void SaveClientToFile(BankClient stBankClient, string FileName) {
 
     string record = ConvertDataToRecord(stBankClient);
@@ -187,8 +186,7 @@ vector<BankClient> ReadFromFile(string FileName) {
     return vBankClients;
 }
 
-//CRUD opreation
-
+//Confirm functions
 char GetYesNoAnswer(string question) {
     char response;
 
@@ -208,7 +206,7 @@ char GetYesNoAnswer(string question) {
     return to_lower(response);
 }
 
-bool AffirmeOperation(string operation) {
+bool ConfirnOperation(string operation) {
     string question = "Are you sure you want to " + operation;
 
     char response = GetYesNoAnswer(question);
@@ -217,9 +215,19 @@ bool AffirmeOperation(string operation) {
     else return 1;
 }
 
-bool AffirmeTrans(string trans) {
+bool ConfirnTrans(string trans) {
   
     string question = "Are you sure you want to perform " +trans+ " Transaction" ;
+
+    char response = GetYesNoAnswer(question);
+
+    if (response == 'n') return 0;
+    else return 1;
+}
+
+bool ConfirmReentry() {
+
+    string question = "Would you like to enter the data again";
 
     char response = GetYesNoAnswer(question);
 
@@ -237,6 +245,7 @@ bool AskMoreClient() {
     else return 1;
 }
 
+//CRUD opreation functions
 bool FindClientByAccNumber(string accNum, BankClient& stBankClient) {
     fstream fileToRead;
 
@@ -354,7 +363,7 @@ void DeleteProcess(string fileName) {
 
         PrintClientData(stClient);
 
-        if (AffirmeOperation("delete")) {
+        if (ConfirnOperation("delete")) {
             DeleteClient(vClients, accNum);
 
             GreenMessage("Client Deleted Successfully");
@@ -406,7 +415,7 @@ void UpdateProcess(string fileName) {
 
         PrintClientData(stClient);
 
-        if (AffirmeOperation("update")) {
+        if (ConfirnOperation("update")) {
             UpdateClient(vClients, accNum);
 
             GreenMessage("Client Updated Successfully");
@@ -635,6 +644,7 @@ BankClient ReadAccNumAndCheckExistingClient() {
     return stClient;
 }
 
+//transactions functions
 void DepositAmountTrans(vector<BankClient> &vBankClients) {
     float depositAmount = 0;
 
@@ -643,7 +653,7 @@ void DepositAmountTrans(vector<BankClient> &vBankClients) {
     cout << "\nPlease enter the amount to deposit :";
     cin >> depositAmount;
 
-    if (AffirmeTrans("deposit")) {
+    if (ConfirnTrans("deposit")) {
         for (BankClient& client : vBankClients) {
             if (client.accNum == stClient.accNum) {
                 client.accBalance = client.accBalance + depositAmount;
@@ -676,7 +686,7 @@ void WithDrawAmountTrans(vector<BankClient>& vBankClients) {
         cin >> WithDrawAmount;
 
         if (WithDrawAmount <= stClient.accBalance) {
-            if (AffirmeTrans("WithDraw")) {
+            if (ConfirnTrans("WithDraw")) {
                 for (BankClient& client : vBankClients) {
                     if (client.accNum == stClient.accNum) {
                         client.accBalance = client.accBalance - WithDrawAmount;
