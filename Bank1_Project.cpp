@@ -19,7 +19,7 @@ using namespace formating;
 
 struct BankClient {
     string accNum;
-    short pinCode;
+    string pinCode;
     string name;
     string phone;
     float accBalance;
@@ -42,7 +42,7 @@ enum enTransMenuOptions {
     eMainMenu = 4
 };
 
-string fileBankClients = "BankClient.txt";
+const string fileBankClients = "BankClient.txt";
 
 void ShowTransMenuScreen();
 
@@ -201,7 +201,7 @@ void PrintClientData(BankClient stBankClient) {
     cout << "--------------------------------";
 }
 
-void FillBankClient(BankClient& stBankClient, string accNum, short pinCode, string name, string phone, float accBalance) {
+void FillBankClient(BankClient& stBankClient, string accNum, string pinCode, string name, string phone, float accBalance) {
     stBankClient.accNum = accNum;
     stBankClient.pinCode = pinCode;
     stBankClient.name = name;
@@ -214,7 +214,7 @@ string ConvertDataToRecord(BankClient stBankClient, string seperator = "#//#") {
     vector<string> vClientData;
 
     vClientData.push_back(stBankClient.accNum);
-    vClientData.push_back(to_string(stBankClient.pinCode));
+    vClientData.push_back(stBankClient.pinCode);
     vClientData.push_back(stBankClient.name);
     vClientData.push_back(stBankClient.phone);
     vClientData.push_back(to_string(stBankClient.accBalance));
@@ -229,7 +229,7 @@ BankClient ConvertRecordToData(string record, string seperator = "#//#") {
 
     vector <string> DataClient = SplitString(record, seperator);
 
-    FillBankClient(stBankClient, DataClient.at(0), stoi(DataClient.at(1)), DataClient.at(2), DataClient.at(3), stof(DataClient.at(4)));
+    FillBankClient(stBankClient, DataClient.at(0), DataClient.at(1), DataClient.at(2), DataClient.at(3), stof(DataClient.at(4)));
 
     return stBankClient;
 }
