@@ -2,4 +2,5 @@
 C:\Users\User\source\repos\Bank1_Project\Bank1_Project\stringra.h(66,34): warning C4267: '=': conversion from 'size_t' to 'short', possible loss of data
   (compiling source file 'Bank1_Project.cpp')
   
+C:\Users\User\source\repos\Bank1_Project\Bank1_Project\Bank1_Project.cpp(677,38): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
   Bank1_Project.vcxproj -> C:\Users\User\source\repos\Bank1_Project\x64\Debug\Bank1_Project.exe
