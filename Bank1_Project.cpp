@@ -672,9 +672,7 @@ bool UserHavePermission(enPermissions persmission) {
 
     if (currentUser.permission == -1) return 1;
     else {
-        cout << "persmission :" << persmission;
-        cout << "\npersmission & currentUser.permission :" << (persmission & currentUser.permission);
-        cout << endl << (persmission & currentUser.permission == persmission);
+
         if ((persmission & currentUser.permission) == persmission) {
             return 1;
         }
@@ -1320,21 +1318,30 @@ void DeleteUserProcess(string fileName) {
     BankUser user;
 
     if (ReadUsernameOfUserExistBefore(username)) {
-        user = GetUserByUsername(username);
-
-        cout << "\nData of user:\n";
-
-        PrintUserData(user);
-
-        if (ConfirnOperation("delete")) {
-            DeleteUser(vUsers, user.username);
-
-            GreenMessage("User Deleted Successfully");
-
-            vUsers = ReadFromUserFile(fileBankUsers);
+        if (username == "Admin") {
+            RedMessage("Admin can't be deleted!!");
         }
-        else RedMessage("The deletion was canceled");
 
+        else if (username == currentUser.username) {
+            RedMessage("you can't delete yourself!!");
+        }
+        else {
+
+            user = GetUserByUsername(username);
+
+            cout << "\nData of user:\n";
+
+            PrintUserData(user);
+
+            if (ConfirnOperation("delete")) {
+                DeleteUser(vUsers, user.username);
+
+                GreenMessage("User Deleted Successfully");
+
+                vUsers = ReadFromUserFile(fileBankUsers);
+            }
+            else RedMessage("The deletion was canceled");
+        }
     }
 }
 
