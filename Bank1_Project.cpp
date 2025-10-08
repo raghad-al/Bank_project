@@ -522,6 +522,8 @@ void AddClient() {
     }
 }
 
+void ShowDeleteClientScreen();
+
 void DeleteClient(vector<BankClient> OldClients, string accNum) {
 
     vector<BankClient> NewClients;
@@ -559,9 +561,16 @@ void DeleteClientProcess(string fileName) {
           
             else  DisplayResultMessage("The deletion was canceled", 0);
 
+            if (AskMoreEntry("delete", "client")) {
+                system("cls");
+                ShowDeleteClientScreen();
+            }
+
     }
 }
 
+
+void ShowUpdateClientScreen();
 void UpdateClient(vector<BankClient>& vClients, string accNum) {
 
     BankClient NewClient;
@@ -576,6 +585,7 @@ void UpdateClient(vector<BankClient>& vClients, string accNum) {
     }
 
     SaveMultipleClientsToFile(vClients, fileBankClients);
+
 }
 
 void UpdateClientProcess(string fileName) {
@@ -599,6 +609,11 @@ void UpdateClientProcess(string fileName) {
              DisplayResultMessage("Client Updated Successfully", 1);
         }
         else DisplayResultMessage("The Update was canceled", 0);
+
+        if (AskMoreEntry("Update", "client")) {
+            system("cls");
+            ShowUpdateClientScreen();
+        }
 
     }
 }
@@ -1215,8 +1230,6 @@ void LoginProcess() {
 
             currentUser = GetUserByUsername(user.username);
 
-            PrintUserData(currentUser);
-            cout << endl;
             ShowMainMenuScreen();
             break;
         }
@@ -1328,6 +1341,7 @@ void AddUser() {
 }
 
 //Delete User
+void ShowDeleteUserScreen();
 void DeleteUser(vector<BankUser> OldUsers, string username) {
 
     vector<BankUser> NewUsers;
@@ -1345,7 +1359,7 @@ void DeleteUserProcess(string fileName) {
     vector<BankUser> vUsers = ReadFromUserFile(fileName);
     string username;
     BankUser user;
-
+    
     if (ReadUsernameOfUserExistBefore(username)) {
         if (username == "Admin") {
             DisplayWarningToUser("Admin can't be deleted!!");
@@ -1369,12 +1383,17 @@ void DeleteUserProcess(string fileName) {
                 vUsers = ReadFromUserFile(fileBankUsers);
             }
             else DisplayResultMessage("The deletion was canceled", 0);
+        }
 
+        if (AskMoreEntry("delete", "user")) {
+            system("cls");
+            ShowDeleteUserScreen();
         }
     }
 }
 
 //Update User
+void ShowUpdateUserScreen();
 void UpdateUser(vector<BankUser>& vUsers, string username) {
 
     BankUser NewUser;
@@ -1415,8 +1434,14 @@ void UpdateUserProcess(string fileName) {
         }
         else DisplayResultMessage("The Update was canceled", 0);
 
+        if (AskMoreEntry("update", "user")) {
+            system("cls");
+            ShowUpdateUserScreen();
+        }
+
     }
 }
+
 
 
 //Screen display of each operation in manage user menu
