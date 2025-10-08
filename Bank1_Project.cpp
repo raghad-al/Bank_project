@@ -151,8 +151,8 @@ void greetAccordingToTime() {
 }
 
 //Confirm functions
-char GetYesNoAnswer(string question) {
-    char response;
+string GetYesNoAnswer(string question) {
+    string response;
 
     do {
 
@@ -162,12 +162,12 @@ char GetYesNoAnswer(string question) {
 
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        if (to_lower(response) != 'n' && to_lower(response) != 'y') {
+        if (to_lower(response) != "n" && to_lower(response) != "y") {
 
             RedMessage("Warning: you can enter only n for no or y for yes");
         }
 
-    } while (to_lower(response) != 'n' && to_lower(response) != 'y');
+    } while (to_lower(response) != "n" && to_lower(response) != "y");
 
     return to_lower(response);
 }
@@ -175,9 +175,9 @@ char GetYesNoAnswer(string question) {
 bool ConfirnOperation(string operation) {
     string question = "Are you sure you want to " + operation;
 
-    char response = GetYesNoAnswer(question);
+    string response = GetYesNoAnswer(question);
 
-    if (response == 'n') return 0;
+    if (response == "n") return 0;
     else return 1;
 }
 
@@ -185,9 +185,9 @@ bool ConfirnTrans(string trans) {
 
     string question = "Are you sure you want to perform " + trans + " Transaction";
 
-    char response = GetYesNoAnswer(question);
+    string response = GetYesNoAnswer(question);
 
-    if (response == 'n') return 0;
+    if (response == "n") return 0;
     else return 1;
 }
 
@@ -195,9 +195,9 @@ bool ConfirmReentry() {
 
     string question = "Would you like to enter data again";
 
-    char response = GetYesNoAnswer(question);
+    string response = GetYesNoAnswer(question);
 
-    if (response == 'n') {
+    if (response == "n") {
         printFarewellMessage();
         return 0;
     }
@@ -208,9 +208,13 @@ bool AskMoreEntry(string action,string typeOfEntry) {
 
     string question = "Do you want to "+ action +" another "+ typeOfEntry;
 
-    char response = GetYesNoAnswer(question);
+    string response = GetYesNoAnswer(question);
 
-    if (response == 'n') return 0;
+    if (response == "n") {
+        printFarewellMessage();
+        return 0;
+    }
+
     else return 1;
 }
 
@@ -995,30 +999,30 @@ void ReadUserData(BankUser& stBankUser) {
 void SetUserPermissions(BankUser& stBankUser) {
     int persmissions = 0;
 
-    if (GetYesNoAnswer("Do you want to give full access") == 'y') persmissions = -1;
+    if (GetYesNoAnswer("Do you want to give full access") == "y") persmissions = -1;
 
     else {
-        if (GetYesNoAnswer("Do you want to give access to show client list") == 'y') {
+        if (GetYesNoAnswer("Do you want to give access to show client list") == "y") {
             persmissions += enPermissions::ePShowAllClient;
         }
 
-        if (GetYesNoAnswer("Do you want to give access to find client") == 'y') {
+        if (GetYesNoAnswer("Do you want to give access to find client") == "y") {
             persmissions += enPermissions::ePFindClient;
         }
 
-        if (GetYesNoAnswer("Do you want to give access to delete client") == 'y') {
+        if (GetYesNoAnswer("Do you want to give access to delete client") == "y") {
             persmissions += enPermissions::ePDeleteClient;
         }
 
-        if (GetYesNoAnswer("Do you want to give access to update client") == 'y') {
+        if (GetYesNoAnswer("Do you want to give access to update client") == "y") {
             persmissions += enPermissions::ePUpdateClient;
         }
 
-        if (GetYesNoAnswer("Do you want to give access to manage users") == 'y') {
+        if (GetYesNoAnswer("Do you want to give access to manage users") == "y") {
             persmissions += enPermissions::ePManageUsers;
         }
 
-        if (GetYesNoAnswer("Do you want to give access to transactions") == 'y') {
+        if (GetYesNoAnswer("Do you want to give access to transactions") == "y") {
             persmissions += enPermissions::ePTransaction;
         }
 
