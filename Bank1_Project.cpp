@@ -68,7 +68,7 @@ enum enPermissions {
     ePManageUsers = 64,
 };
 
-const string fileBankClients = "BankClient.txt";
+const string fileBankClients = "BankClients.txt";
 const string fileBankUsers = "BankUsers.txt";
 
 
@@ -1323,7 +1323,7 @@ void DeleteUserProcess(string fileName) {
         }
 
         else if (username == currentUser.username) {
-            RedMessage("you can't delete yourself!!");
+            RedMessage("You can't delete yourself!!");
         }
         else {
 
